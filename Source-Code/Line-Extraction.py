@@ -5,9 +5,9 @@ import numpy as np
 import math
 import matplotlib.pyplot as plt
 
-IMAGE_WIDTH = 1280
+IMAGE_WIDTH = 640
 HALF_IMAGE_WIDTH = IMAGE_WIDTH / 2
-IMAGE_HEIGHT = 720
+IMAGE_HEIGHT = 360
 
 angleStep = 1
 lengthStep = 5
@@ -172,11 +172,11 @@ def main():
     cv2.createTrackbar('wVMin','White',0,255,nothing)
     cv2.createTrackbar('wVMax','White',0,255,nothing)
    
-    cv2.setTrackbarPos('wHMin','White',65)
+    cv2.setTrackbarPos('wHMin','White',0)
     cv2.setTrackbarPos('wHMax','White',255)
     cv2.setTrackbarPos('wSMin','White',0)
     cv2.setTrackbarPos('wSMax','White',255)
-    cv2.setTrackbarPos('wVMin','White',0)
+    cv2.setTrackbarPos('wVMin','White',140)
     cv2.setTrackbarPos('wVMax','White',255)
 
     # Calculating maximum length
@@ -188,7 +188,8 @@ def main():
         start = time.time()
         # Load image from file
         frame = cv2.imread("d:\Research\BarelangFC-Line-Extraction\Source-Code\image4.jpg")
-        print frame.shape[:2]
+        frame = cv2.resize(frame,None,fx=0.5, fy=0.5, interpolation = cv2.INTER_CUBIC)
+        # print frame.shape[:2]
         modifiedFrame = frame.copy()
 
         hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
@@ -253,8 +254,8 @@ def main():
                         foundGreen = True
                         # Cek jarak dulu sebelum dimasukkan ke list
                         listIndex = len(listPointP[0])-1
-                        print 'Index '
-                        print listIndex
+                        # print 'Index '
+                        # print listIndex
                         if listIndex != -1:
                             varP1 = [0,0]
                             varP1[0] = x
@@ -262,15 +263,15 @@ def main():
                             varP2 = [0,0]
                             varP2[0] = listPointP[0][listIndex] 
                             varP2[1] = listPointP[1][listIndex]
-                            print 'P1 '
-                            print varP1
-                            print 'P2 '
-                            print varP2
+                            # print 'P1 '
+                            # print varP1
+                            # print 'P2 '
+                            # print varP2
                             dBetweenP = measPointToPoint(varP1,varP2)
                         # else:
                         # dBetweenP = 0
-                        print 'Jarak '
-                        print dBetweenP
+                        # print 'Jarak '
+                        # print dBetweenP
                         # Masukkan koordinat ke dalam list
                         if dBetweenP < 50:
                             listPointP[0].append(x)
@@ -305,9 +306,7 @@ def main():
                     break
 
         
-        end = time.time()
-        miliseconds = end - start
-        print miliseconds
+        
         # print listPointP
 
         # Input 2 buah endpoint untuk masukan awal
@@ -344,12 +343,18 @@ def main():
             for i in range(0,len(listPredLine[0])-1):
                 cv2.line(modifiedFrame,(listPredLine[0][i],listPredLine[1][i]),(listPredLine[0][i+1],listPredLine[1][i+1]),(255,0,0),5)
         
-        cv2.imshow("frame",frame)
+        # cv2.imshow("frame",frame)
         cv2.imshow("New Image",modifiedFrame)
         if showBinary == True:
-            cv2.imshow("Binary",gBinary)
+            cv2.imshow("Green Bin",gBinary)
+            cv2.imshow("White Bin",wBinary)
         # Plot list of point
-
+        
+        end = time.time()
+        miliseconds = end - start
+        FPS = 1/miliseconds
+        print 'fps = '
+        print FPS
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
